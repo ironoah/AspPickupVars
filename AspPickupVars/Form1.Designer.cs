@@ -72,7 +72,7 @@ namespace AspPickupVars
             this.Controls.Add(this.txtAfter);
             this.Controls.Add(this.txtBefore);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "AspPickupVars";
             this.ResumeLayout(false);
             this.PerformLayout();
 
