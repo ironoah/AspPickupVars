@@ -15,16 +15,29 @@ namespace AspPickupVars
 
         private void btnReplace_Click(object sender, EventArgs e)
         {
-            string strBuff = "";
+            string[] selected = new string[3];
+            string[] pickupName = { "name=\"(?<name>.+?)\"", "        public string ", "  { get; set; }\r\n" };
+            string[] pickupValue = { "<%=(?<name>.+?)%>", "ViewBag.", ";\r\n" };
+            if (radioButton1.Checked)
+            {
+                selected[0] = pickupName[0];
+                selected[1] = pickupName[1];
+                selected[2] = pickupName[2];
+            } else
+            {
+                selected[0] = pickupValue[0];
+                selected[1] = pickupValue[1];
+                selected[2] = pickupValue[2];
+            }
 
-            Regex re = new Regex("<%=(?<varname>.*?)%>", RegexOptions.IgnoreCase
+            Regex re = new Regex(selected[0], RegexOptions.IgnoreCase
                                        | RegexOptions.Singleline);
 
             List<string> vars = new List<string>();
 
             for (Match m = re.Match(txtBefore.Text); m.Success; m = m.NextMatch())
             {
-                vars.Add("ViewBag." + m.Groups["varname"].Value + ";\r\n");
+                vars.Add(selected[1] + m.Groups["name"].Value + selected[2]);
             }
             // sort and distinct        
             string[] fix = vars.Distinct().OrderBy(i => i).ToArray();
