@@ -1,14 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
-using System.IO;
+using System.Text.RegularExpressions;
 
 namespace AspPickupVars
 {
@@ -21,31 +13,14 @@ namespace AspPickupVars
 
         private void btnReplace_Click(object sender, EventArgs e)
         {
-            string dirpath = Environment.GetEnvironmentVariable("USERPROFILE") + @"\Desktop\";
-            string filename = txtConvFileName.Text; // TSV File
-            string[] strReplArray = File.ReadAllLines(dirpath + filename, Encoding.UTF8);
-
             string strBuff = "";
-            strBuff = txtBefore.Text;
 
-            for (int cnt = 0; cnt < strReplArray.GetLength(0); cnt++)
+            Regex re = new Regex("<%=(?<varname>.*?)%>", RegexOptions.IgnoreCase
+                                       | RegexOptions.Singleline);
+
+            for (Match m = re.Match(txtBefore.Text); m.Success; m = m.NextMatch())
             {
-                string[] pairStr = strReplArray[cnt].Split('\t');
-
-                StringBuilder strread = new StringBuilder();
-                string[] strarray = strBuff.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-                for (int i = 0; i < strarray.GetLength(0); i++)
-                {
-                    if (strarray[i].Contains(pairStr[0]) == true)
-                    {
-                        strread.AppendLine(strarray[i].Replace(pairStr[0], pairStr[1]));
-                    }
-                    else
-                    {
-                        strread.AppendLine(strarray[i]);
-                    }
-                }
-                strBuff = strread.ToString();
+                strBuff += "ViewBag." + m.Groups["varname"].Value + ";\r\n";
             }
             txtAfter.Text = strBuff.TrimEnd();
         }
